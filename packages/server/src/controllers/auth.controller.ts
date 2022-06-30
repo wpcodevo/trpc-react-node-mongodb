@@ -1,6 +1,5 @@
 import { TRPCError } from '@trpc/server';
 import { CookieOptions } from 'express';
-import { serialize } from 'cookie';
 import { Context } from '../app';
 import customConfig from '../config/default';
 import { CreateUserInput, LoginUserInput } from '../schema/user.schema';
