@@ -1,0 +1,14 @@
+{
+  "name": "trpc-node-react",
+  "private": "true",
+  "scripts": {
+    "start": "concurrently \"wsrun --parallel start\""
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^7.2.2",
+    "wsrun": "^5.2.4"
+  }
+}
