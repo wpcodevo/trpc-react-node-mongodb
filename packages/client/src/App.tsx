@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { useRoutes } from 'react-router-dom';
 import { getFetch } from '@trpc/client';
-import routes from './router';
 import { trpc } from './trpc';
-import AuthMiddleware from './middleware/AuthMiddleware';
 
 function AppContent() {
-  const content = useRoutes(routes);
-  return content;
+  const hello = trpc.useQuery(['hello']);
+  return <main className='p-2'>{JSON.stringify(hello.data, null, 2)}</main>;
 }
 
 function App() {
@@ -38,9 +35,7 @@ function App() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <AuthMiddleware>
-          <AppContent />
-        </AuthMiddleware>
+        <AppContent />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </trpc.Provider>
