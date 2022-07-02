@@ -1,17 +1,11 @@
 import path from 'path';
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const customConfig = {
+const customConfig: { port: number; origin: string; dbUri: string } = {
   port: 8000,
-  accessTokenExpiresIn: 15,
-  refreshTokenExpiresIn: 60,
-  origin: 'http://localhost:3000',
+  origin: process.env.ORIGIN as unknown as string,
 
-  dbUri: process.env.MONGODB_URI as string,
-  accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-  accessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC_KEY as string,
-  refreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-  refreshTokenPublicKey: process.env.REFRESH_TOKEN_PUBLIC_KEY as string,
+  dbUri: process.env.MONGODB_URI as unknown as string,
 };
 
 export default customConfig;

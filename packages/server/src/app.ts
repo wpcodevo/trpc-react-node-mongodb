@@ -6,6 +6,7 @@ import cors from 'cors';
 import * as trpc from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import connectDB from './utils/connectDB';
+import redisClient from './utils/connectRedis';
 import customConfig from './config/default';
 
 dotenv.config({ path: path.join(__dirname, './.env') });
@@ -22,8 +23,9 @@ function createRouter() {
 }
 
 const appRouter = createRouter().query('hello', {
-  resolve() {
-    return { name: 'Hello World' };
+  resolve: async () => {
+    const message = await redisClient.get('tRPC');
+    return { message };
   },
 });
 

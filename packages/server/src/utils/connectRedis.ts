@@ -9,6 +9,10 @@ const connectRedis = async () => {
   try {
     await redisClient.connect();
     console.log('🚀 Redis client connected...');
+    redisClient.set(
+      'tRPC',
+      '🙌🙌Welcome to rRPC with React.js, Express and Typescript!'
+    );
   } catch (err: any) {
     console.log(err.message);
     process.exit(1);
