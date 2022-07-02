@@ -1,8 +1,7 @@
-import path from 'path';
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 import mongoose from 'mongoose';
+import customConfig from '../config/default';
 
-const dbUrl = process.env.MONGODB_URI as string;
+const dbUrl = customConfig.dbUri;
 
 const connectDB = async () => {
   try {

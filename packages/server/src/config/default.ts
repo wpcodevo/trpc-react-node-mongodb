@@ -1,7 +1,17 @@
 import path from 'path';
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const customConfig = {
+const customConfig: {
+  port: number;
+  accessTokenExpiresIn: number;
+  refreshTokenExpiresIn: number;
+  origin: string;
+  dbUri: string;
+  accessTokenPrivateKey: string;
+  accessTokenPublicKey: string;
+  refreshTokenPrivateKey: string;
+  refreshTokenPublicKey: string;
+} = {
   port: 8000,
   accessTokenExpiresIn: 15,
   refreshTokenExpiresIn: 60,
