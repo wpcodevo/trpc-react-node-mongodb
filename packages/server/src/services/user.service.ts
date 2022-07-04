@@ -1,11 +1,13 @@
 import { omit } from 'lodash';
 import { FilterQuery, QueryOptions } from 'mongoose';
 import userModel, { User } from '../models/user.model';
-import { excludedFields } from '../controllers/auth.controller';
 import { signJwt } from '../utils/jwt';
 import redisClient from '../utils/connectRedis';
 import { DocumentType } from '@typegoose/typegoose';
 import customConfig from '../config/default';
+
+// Exclude this fields from the response
+export const excludedFields = ['password'];
 
 // CreateUser service
 export const createUser = async (input: Partial<User>) => {
