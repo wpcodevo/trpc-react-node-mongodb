@@ -5,7 +5,7 @@ export interface IUser {
   photo: string;
   _id: string;
   id: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 }

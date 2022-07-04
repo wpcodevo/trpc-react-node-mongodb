@@ -13,22 +13,22 @@ import {
 import redisClient from '../utils/connectRedis';
 import { signJwt, verifyJwt } from '../utils/jwt';
 
-// Exclude this fields from the response
-export const excludedFields = ['password'];
-
 // Cookie options
-const accessTokenCookieOptions: CookieOptions = {
-  expires: new Date(Date.now() + customConfig.accessTokenExpiresIn * 60 * 1000),
+const cookieOptions: CookieOptions = {
   httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',
+};
+const accessTokenCookieOptions: CookieOptions = {
+  ...cookieOptions,
+  expires: new Date(Date.now() + customConfig.accessTokenExpiresIn * 60 * 1000),
 };
 
 const refreshTokenCookieOptions: CookieOptions = {
+  ...cookieOptions,
   expires: new Date(
     Date.now() + customConfig.refreshTokenExpiresIn * 60 * 1000
   ),
-  httpOnly: true,
-  sameSite: 'lax',
 };
 
 // Only set secure to true in production
@@ -45,6 +45,7 @@ export const registerHandler = async ({
       email: input.email,
       name: input.name,
       password: input.password,
+      photo: input.photo,
     });
 
     return {

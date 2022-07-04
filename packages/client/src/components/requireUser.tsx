@@ -1,14 +1,14 @@
 import { useCookies } from 'react-cookie';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useStateContext } from '../context';
-import { IUser } from '../context/types';
+import { IUser } from '../lib/types';
+import useStore from '../store';
 import { trpc } from '../trpc';
 import FullScreenLoader from './FullScreenLoader';
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const [cookies] = useCookies(['logged_in']);
   const location = useLocation();
-  const stateContext = useStateContext();
+  const store = useStore();
 
   const {
     isLoading,
@@ -18,10 +18,9 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
-      stateContext.dispatch({ type: 'SET_USER', payload: data as IUser });
+      store.setAuthUser(data as IUser);
     },
     onError: (error) => {
-      console.log(error);
       if (error.message.includes('Could not refresh access token')) {
         document.location.href = '/login';
       }

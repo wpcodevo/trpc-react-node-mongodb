@@ -1,10 +1,9 @@
 import { useCookies } from 'react-cookie';
-import { useStateContext } from '../context';
-import FullScreenLoader from '../components/FullScreenLoader';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { trpc } from '../trpc';
-import { IUser } from '../context/types';
 import { useQueryClient } from 'react-query';
+import useStore from '../store';
+import { IUser } from '../lib/types';
 
 type AuthMiddlewareProps = {
   children: React.ReactElement;
@@ -12,13 +11,14 @@ type AuthMiddlewareProps = {
 
 const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const [cookies] = useCookies(['logged_in']);
-  const stateContext = useStateContext();
+  const store = useStore();
 
   const queryClient = useQueryClient();
-  const { refetch } = trpc.useQuery(['auth.refresh'], {
+  const { refetch, isLoading, isFetching } = trpc.useQuery(['auth.refresh'], {
     retry: 1,
     enabled: false,
     onSuccess: (data) => {
+      store.setPageLoading(false);
       queryClient.invalidateQueries('users.me');
     },
   });
@@ -28,10 +28,12 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
-      stateContext.dispatch({ type: 'SET_USER', payload: data as IUser });
+      store.setAuthUser(data as IUser);
+      store.setPageLoading(false);
     },
     onError: (error) => {
       let retryRequest = true;
+      store.setPageLoading(false);
       if (error.message.includes('must be logged in') && retryRequest) {
         retryRequest = false;
         try {
@@ -46,9 +48,15 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     },
   });
 
-  if (query.isLoading) {
-    return <FullScreenLoader />;
-  }
+  const loading =
+    isLoading || isFetching || query.isLoading || query.isFetching;
+
+  useEffect(() => {
+    if (loading) {
+      store.setPageLoading(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   return children;
 };

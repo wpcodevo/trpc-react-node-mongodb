@@ -7,12 +7,14 @@ import FormInput from '../components/FormInput';
 import { LoadingButton } from '../components/LoadingButton';
 import { toast } from 'react-toastify';
 import { trpc } from '../trpc';
+import FileUpLoader from '../components/FileUpload';
 
 const registerSchema = object({
   name: string().min(1, 'Full name is required').max(100),
   email: string()
     .min(1, 'Email address is required')
     .email('Email Address is invalid'),
+  photo: string().min(1, 'Photo is required').url('Invalid image URL'),
   password: string()
     .min(1, 'Password is required')
     .min(8, 'Password must be more than 8 characters')
@@ -88,6 +90,7 @@ const RegisterPage = () => {
               name='passwordConfirm'
               type='password'
             />
+            <FileUpLoader name='photo' />
             <span className='block'>
               Already have an account?{' '}
               <Link to='/login' className='text-ct-blue-600'>

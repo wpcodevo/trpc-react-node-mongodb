@@ -1,9 +1,8 @@
-import { useStateContext } from '../context';
+import useStore from '../store';
 
 const ProfilePage = () => {
-  const stateContext = useStateContext();
-
-  const user = stateContext.state.authUser;
+  const store = useStore();
+  const user = store.authUser;
 
   return (
     <section className='bg-ct-blue-600 min-h-screen pt-20'>
