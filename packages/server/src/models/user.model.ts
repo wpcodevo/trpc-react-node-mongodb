@@ -46,5 +46,5 @@ export class User {
 }
 
 // Create the user model from the User class
-const userModel = getModelForClass(User);
+const userModel = getModelForClass<typeof User>(User);
 export default userModel;
