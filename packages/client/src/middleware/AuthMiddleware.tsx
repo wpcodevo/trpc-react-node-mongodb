@@ -1,10 +1,10 @@
 import { useCookies } from 'react-cookie';
-import { useStateContext } from '../context';
 import FullScreenLoader from '../components/FullScreenLoader';
 import React from 'react';
 import { trpc } from '../trpc';
-import { IUser } from '../context/types';
+import { IUser } from '../libs/types';
 import { useQueryClient } from 'react-query';
+import useStore from '../store';
 
 type AuthMiddlewareProps = {
   children: React.ReactElement;
@@ -12,7 +12,7 @@ type AuthMiddlewareProps = {
 
 const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const [cookies] = useCookies(['logged_in']);
-  const stateContext = useStateContext();
+  const store = useStore();
 
   const queryClient = useQueryClient();
   const { refetch } = trpc.useQuery(['auth.refresh'], {
@@ -28,7 +28,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
-      stateContext.dispatch({ type: 'SET_USER', payload: data as IUser });
+      store.setAuthUser(data as IUser);
     },
     onError: (error) => {
       let retryRequest = true;

@@ -1,11 +1,11 @@
 import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
-import { useStateContext } from '../context';
+import useStore from '../store';
 import { trpc } from '../trpc';
 
 const Header = () => {
-  const stateContext = useStateContext();
-  const user = stateContext.state.authUser;
+  const store = useStore();
+  const user = store.authUser;
 
   const queryClient = useQueryClient();
   const { mutate: logoutUser } = trpc.useMutation(['auth.logout'], {
@@ -14,7 +14,6 @@ const Header = () => {
       document.location.href = '/login';
     },
     onError(error) {
-      console.log(error);
       queryClient.clear();
       document.location.href = '/login';
     },
