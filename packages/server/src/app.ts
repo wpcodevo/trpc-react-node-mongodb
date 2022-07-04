@@ -17,6 +17,19 @@ import { getMeHandler } from './controllers/user.controller';
 import { deserializeUser } from './middleware/deserializeUser';
 import connectDB from './utils/connectDB';
 import customConfig from './config/default';
+import {
+  createPostSchema,
+  filterQuery,
+  params,
+  updatePostSchema,
+} from './schema/post.schema';
+import {
+  createPostHandler,
+  deletePostHandler,
+  getPostHandler,
+  getPostsHandler,
+  updatePostHandler,
+} from './controllers/post.controller';
 
 dotenv.config({ path: path.join(__dirname, './.env') });
 
@@ -59,6 +72,29 @@ const userRouter = createRouter()
     resolve: ({ ctx }) => getMeHandler({ ctx }),
   });
 
+const postRouter = createRouter()
+  .mutation('create', {
+    input: createPostSchema,
+    resolve: ({ input, ctx }) => createPostHandler({ input, ctx }),
+  })
+  .mutation('update', {
+    input: updatePostSchema,
+    resolve: ({ input }) =>
+      updatePostHandler({ paramsInput: input.params, input: input.body }),
+  })
+  .mutation('delete', {
+    input: params,
+    resolve: ({ input }) => deletePostHandler({ paramsInput: input }),
+  })
+  .query('getPost', {
+    input: params,
+    resolve: ({ input }) => getPostHandler({ paramsInput: input }),
+  })
+  .query('getPosts', {
+    input: filterQuery,
+    resolve: ({ input }) => getPostsHandler({ filterQuery: input }),
+  });
+
 const appRouter = createRouter()
   .query('hello', {
     resolve() {
@@ -66,7 +102,8 @@ const appRouter = createRouter()
     },
   })
   .merge('auth.', authRouter)
-  .merge('users.', userRouter);
+  .merge('users.', userRouter)
+  .merge('posts.', postRouter);
 
 export type AppRouter = typeof appRouter;
 
