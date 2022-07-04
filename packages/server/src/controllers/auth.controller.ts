@@ -44,6 +44,7 @@ export const registerHandler = async ({
       email: input.email,
       name: input.name,
       password: input.password,
+      photo: input.photo,
     });
 
     return {
