@@ -7,3 +7,7 @@
 ### 2. Build tRPC API with React.js & Node.js: Access and Refresh Tokens
 
 [Build tRPC API with React.js & Node.js: Access and Refresh Tokens](https://codevoweb.com/trpc-api-with-reactjs-nodejs-access-and-refresh-tokens)
+
+### 3. Full-Stack App tRPC, React.js, & Node.js: JWT Authentication
+
+[Full-Stack App tRPC, React.js, & Node.js: JWT Authentication](https://codevoweb.com/fullstack-app-trpc-reactjs-nodejs-jwt-authentication)
