@@ -9,3 +9,19 @@ export interface IUser {
   updatedAt: string;
   __v: number;
 }
+
+export type IPost = {
+  _id: string;
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    email: string;
+    name: string;
+    photo: string;
+  };
+};

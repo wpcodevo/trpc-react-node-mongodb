@@ -17,7 +17,10 @@ export class Post {
   @prop({ required: true })
   content: string;
 
-  @prop({ default: 'default-post.png' })
+  @prop({ required: true })
+  category: string;
+
+  @prop({ required: true })
   image: string;
 
   @prop({ ref: () => User })

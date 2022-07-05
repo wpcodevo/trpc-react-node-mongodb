@@ -31,10 +31,6 @@ const refreshTokenCookieOptions: CookieOptions = {
   ),
 };
 
-// Only set secure to true in production
-if (process.env.NODE_ENV === 'production')
-  accessTokenCookieOptions.secure = true;
-
 export const registerHandler = async ({
   input,
 }: {

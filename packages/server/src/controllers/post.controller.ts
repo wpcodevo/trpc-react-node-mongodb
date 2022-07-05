@@ -85,7 +85,11 @@ export const getPostsHandler = async ({
     const limit = filterQuery.limit || 10;
     const page = filterQuery.page || 1;
     const skip = (page - 1) * limit;
-    const posts = await postModel.find().skip(skip).limit(limit);
+    const posts = await postModel
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .populate({ path: 'user', select: 'name email photo' });
 
     return {
       status: 'success',

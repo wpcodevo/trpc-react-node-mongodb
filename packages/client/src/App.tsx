@@ -6,6 +6,7 @@ import { getFetch } from '@trpc/client';
 import routes from './router';
 import { trpc } from './trpc';
 import AuthMiddleware from './middleware/AuthMiddleware';
+import { CookiesProvider } from 'react-cookie';
 
 function AppContent() {
   const content = useRoutes(routes);
@@ -37,12 +38,14 @@ function App() {
   );
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <AuthMiddleware>
-          <AppContent />
-        </AuthMiddleware>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <CookiesProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthMiddleware>
+            <AppContent />
+          </AuthMiddleware>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </CookiesProvider>
     </trpc.Provider>
   );
 }

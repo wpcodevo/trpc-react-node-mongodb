@@ -23,7 +23,7 @@ export type LoginInput = TypeOf<typeof loginSchema>;
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = ((location.state as any)?.from.pathname as string) || '/profile';
+  const from = ((location.state as any)?.from.pathname as string) || '/';
 
   const { isLoading, mutate: loginUser } = trpc.useMutation(['auth.login'], {
     onSuccess(data) {

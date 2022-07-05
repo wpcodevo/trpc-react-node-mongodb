@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import useStore from '../store';
 import { trpc } from '../trpc';
+import PostModal from './modals/post.modal';
+import CreatePost from './posts/create.post';
 import Spinner from './Spinner';
 
 const Header = () => {
+  const [openPostModal, setOpenPostModal] = useState(false);
   const store = useStore();
   const user = store.authUser;
 
@@ -60,7 +64,12 @@ const Header = () => {
                     Profile
                   </Link>
                 </li>
-                <li className='cursor-pointer'>Create Post</li>
+                <li
+                  className='cursor-pointer'
+                  onClick={() => setOpenPostModal(true)}
+                >
+                  Create Post
+                </li>
                 <li className='cursor-pointer' onClick={handleLogout}>
                   Logout
                 </li>
@@ -69,6 +78,12 @@ const Header = () => {
           </ul>
         </nav>
       </header>
+      <PostModal
+        openPostModal={openPostModal}
+        setOpenPostModal={setOpenPostModal}
+      >
+        <CreatePost setOpenPostModal={setOpenPostModal} />
+      </PostModal>
       <div className='pt-4 pl-2 bg-ct-blue-600 fixed'>
         {store.pageLoading && <Spinner color='text-ct-yellow-600' />}
       </div>
