@@ -37,16 +37,16 @@ function App() {
     })
   );
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <CookiesProvider>
+    <CookiesProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <AuthMiddleware>
             <AppContent />
           </AuthMiddleware>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
-      </CookiesProvider>
-    </trpc.Provider>
+      </trpc.Provider>
+    </CookiesProvider>
   );
 }
 

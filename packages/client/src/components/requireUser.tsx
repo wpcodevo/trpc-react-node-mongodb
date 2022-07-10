@@ -24,10 +24,12 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
+      store.setPageLoading(false);
       store.setAuthUser(data as IUser);
     },
     onError: (error) => {
       let retryRequest = true;
+      store.setPageLoading(false);
       if (error.message.includes('must be logged in') && retryRequest) {
         retryRequest = false;
         try {

@@ -31,7 +31,7 @@ const CreatePost: FC<ICreatePostProp> = ({ setOpenPostModal }) => {
     onSuccess(data) {
       store.setPageLoading(false);
       setOpenPostModal(false);
-      queryClient.refetchQueries('GetAllPosts');
+      queryClient.refetchQueries('posts.getPosts');
       toast('Post created successfully', {
         type: 'success',
         position: 'top-right',

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import { IPost } from '../../lib/types';
 import { toast } from 'react-toastify';
@@ -73,7 +73,9 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
           </h5>
           <div className='flex items-center mt-4'>
             <p className='p-1 rounded-sm mr-4 bg-[#dad8d8]'>{post.category}</p>
-            <p className='text-[#ffa238]'>{`2022-01-01`}</p>
+            <p className='text-[#ffa238]'>
+              {format(parseISO(post.createdAt), 'PPP')}
+            </p>
           </div>
         </div>
         <div className='flex justify-between items-center px-4 pb-4'>
@@ -103,7 +105,7 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
               <li
                 className='w-24 h-7 py-3 px-2 hover:bg-[#f5f5f5] flex items-center gap-2 cursor-pointer transition ease-in duration-300'
                 onClick={() => {
-                  store.setOpenModal(true);
+                  setOpenPostModal(true);
                   toggleMenu();
                 }}
               >

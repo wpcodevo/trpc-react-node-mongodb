@@ -29,6 +29,7 @@ export const createPostHandler = async ({
     const post = await createPost({
       title: input.title,
       content: input.content,
+      category: input.category,
       image: input.image,
       user: user._id,
     });

@@ -4,6 +4,9 @@ export const createPostSchema = object({
   title: string({
     required_error: 'Title is required',
   }),
+  category: string({
+    required_error: 'Category is required',
+  }),
   content: string({
     required_error: 'Content is required',
   }),
@@ -20,6 +23,7 @@ export const updatePostSchema = object({
   params,
   body: object({
     title: string(),
+    category: string(),
     content: string(),
     image: string(),
   }).partial(),

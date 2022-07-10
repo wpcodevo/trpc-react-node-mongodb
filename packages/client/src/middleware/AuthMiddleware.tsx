@@ -1,10 +1,9 @@
 import { useCookies } from 'react-cookie';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { trpc } from '../trpc';
 import { useQueryClient } from 'react-query';
 import useStore from '../store';
 import { IUser } from '../lib/types';
-import FullScreenLoader from '../components/FullScreenLoader';
 
 type AuthMiddlewareProps = {
   children: React.ReactElement;
@@ -21,6 +20,9 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     onSuccess: (data) => {
       queryClient.invalidateQueries('users.me');
     },
+    onError: (error) => {
+      document.location.href = '/login';
+    },
   });
 
   const query = trpc.useQuery(['users.me'], {
@@ -29,9 +31,11 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     select: (data) => data.data.user,
     onSuccess: (data) => {
       store.setAuthUser(data as IUser);
+      store.setPageLoading(false);
     },
     onError: (error) => {
       let retryRequest = true;
+      store.setPageLoading(false);
       if (error.message.includes('must be logged') && retryRequest) {
         retryRequest = false;
         try {
@@ -48,9 +52,12 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const loading =
     isLoading || isFetching || query.isLoading || query.isFetching;
 
-  if (loading) {
-    return <FullScreenLoader />;
-  }
+  useEffect(() => {
+    if (loading) {
+      store.setPageLoading(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   return children;
 };
