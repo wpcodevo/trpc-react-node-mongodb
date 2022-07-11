@@ -57,7 +57,10 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
   };
   return (
     <>
-      <div className='rounded-md shadow-md bg-white'>
+      <div
+        className='rounded-md shadow-md bg-white'
+        onClick={() => toggleMenu()}
+      >
         <div className='mx-2 mt-2 overflow-hidden rounded-md'>
           <img
             src={post.image}

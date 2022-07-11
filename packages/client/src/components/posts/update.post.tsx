@@ -72,7 +72,7 @@ const UpdatePost: FC<IUpdatePostProps> = ({ post, setOpenPostModal }) => {
   }, []);
 
   const onSubmitHandler: SubmitHandler<UpdatePostInput> = async (data) => {
-    updatePost({ body: data, params: { postId: post.id } });
+    updatePost({ body: data, params: { postId: post._id } });
   };
   return (
     <section>
