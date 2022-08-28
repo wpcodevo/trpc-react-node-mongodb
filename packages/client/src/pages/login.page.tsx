@@ -2,7 +2,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FormInput from '../components/FormInput';
 import { LoadingButton } from '../components/LoadingButton';
 import { toast } from 'react-toastify';
@@ -22,8 +22,6 @@ export type LoginInput = TypeOf<typeof loginSchema>;
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = ((location.state as any)?.from.pathname as string) || '/';
 
   const { isLoading, mutate: loginUser } = trpc.useMutation(['auth.login'], {
     onSuccess(data) {
@@ -31,7 +29,7 @@ const LoginPage = () => {
         type: 'success',
         position: 'top-right',
       });
-      navigate(from);
+      navigate('/profile');
     },
     onError(error) {
       toast(error.message, {

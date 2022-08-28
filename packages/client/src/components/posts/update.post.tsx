@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import useStore from '../../store';
 import { IPost } from '../../lib/types';
 import { trpc } from '../../trpc';
+import { useQueryClient } from 'react-query';
 
 type IUpdatePostProps = {
   post: IPost;
@@ -26,11 +27,13 @@ const updatePostSchema = object({
 type UpdatePostInput = TypeOf<typeof updatePostSchema>;
 
 const UpdatePost: FC<IUpdatePostProps> = ({ post, setOpenPostModal }) => {
+  const queryClient = useQueryClient();
   const store = useStore();
   const { isLoading, mutate: updatePost } = trpc.useMutation(['posts.update'], {
     onSuccess(data) {
       store.setPageLoading(false);
       setOpenPostModal(false);
+      queryClient.refetchQueries(['posts.getPosts']);
       toast('Post updated successfully', {
         type: 'success',
         position: 'top-right',

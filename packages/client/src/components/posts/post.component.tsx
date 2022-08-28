@@ -21,7 +21,7 @@ const PostItem: FC<PostItemProps> = ({ post }) => {
   const { isLoading, mutate: deletePost } = trpc.useMutation(['posts.delete'], {
     onSuccess(data) {
       store.setPageLoading(false);
-      queryClient.refetchQueries('GetAllPosts');
+      queryClient.refetchQueries(['posts.getPosts']);
       toast('Post deleted successfully', {
         type: 'success',
         position: 'top-right',
