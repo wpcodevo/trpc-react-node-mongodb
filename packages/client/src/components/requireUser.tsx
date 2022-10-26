@@ -1,34 +1,40 @@
-import { useCookies } from 'react-cookie';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useStateContext } from '../context';
-import { IUser } from '../context/types';
-import { trpc } from '../trpc';
-import FullScreenLoader from './FullScreenLoader';
+import { useCookies } from "react-cookie";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { IUser } from "../lib/types";
+import useStore from "../store";
+import { trpc } from "../trpc";
+import FullScreenLoader from "./FullScreenLoader";
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const [cookies] = useCookies(['logged_in']);
+  const [cookies] = useCookies(["logged_in"]);
   const location = useLocation();
-  const stateContext = useStateContext();
+  const store = useStore();
 
-  const {
-    isLoading,
-    isFetching,
-    data: user,
-  } = trpc.useQuery(['users.me'], {
+  const { isLoading, isFetching } = trpc.getMe.useQuery(undefined, {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
-      stateContext.dispatch({ type: 'SET_USER', payload: data as IUser });
+      store.setPageLoading(false);
+      store.setAuthUser(data as IUser);
     },
     onError: (error) => {
-      console.log(error);
-      if (error.message.includes('Could not refresh access token')) {
-        document.location.href = '/login';
+      let retryRequest = true;
+      store.setPageLoading(false);
+      if (error.message.includes("must be logged in") && retryRequest) {
+        retryRequest = false;
+        try {
+        } catch (err: any) {
+          console.log(err);
+          if (err.message.includes("Could not refresh access token")) {
+            document.location.href = "/login";
+          }
+        }
       }
     },
   });
 
   const loading = isLoading || isFetching;
+  const user = store.authUser;
 
   if (loading) {
     return <FullScreenLoader />;
@@ -38,9 +44,9 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     allowedRoles.includes(user?.role as string) ? (
     <Outlet />
   ) : cookies.logged_in && user ? (
-    <Navigate to='/unauthorized' state={{ from: location }} replace />
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to='/login' state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 

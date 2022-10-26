@@ -1,13 +1,24 @@
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 type SpinnerProps = {
   width?: number;
   height?: number;
+  color?: string;
+  bgColor?: string;
 };
-const Spinner: React.FC<SpinnerProps> = ({ width = 5, height = 5 }) => {
+const Spinner: React.FC<SpinnerProps> = ({
+  width = 5,
+  height = 5,
+  color,
+  bgColor,
+}) => {
   return (
     <svg
       role='status'
-      className={`w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600`}
+      className={twMerge(
+        'w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600',
+        `w-${width} h-${height} ${color} ${bgColor}`
+      )}
       viewBox='0 0 100 101'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
