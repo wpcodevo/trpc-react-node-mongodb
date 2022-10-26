@@ -1,12 +1,12 @@
-import { useCookies } from 'react-cookie';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { IUser } from '../lib/types';
-import useStore from '../store';
-import { trpc } from '../trpc';
-import FullScreenLoader from './FullScreenLoader';
+import { useCookies } from "react-cookie";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { IUser } from "../libs/types";
+import useStore from "../store";
+import { trpc } from "../trpc";
+import FullScreenLoader from "./FullScreenLoader";
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const [cookies] = useCookies(['logged_in']);
+  const [cookies] = useCookies(["logged_in"]);
   const location = useLocation();
   const store = useStore();
 
@@ -14,15 +14,16 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     isLoading,
     isFetching,
     data: user,
-  } = trpc.useQuery(['users.me'], {
+  } = trpc.getMe.useQuery(undefined, {
     retry: 1,
     select: (data) => data.data.user,
     onSuccess: (data) => {
       store.setAuthUser(data as IUser);
     },
     onError: (error) => {
-      if (error.message.includes('Could not refresh access token')) {
-        document.location.href = '/login';
+      console.log(error);
+      if (error.message.includes("Could not refresh access token")) {
+        document.location.href = "/login";
       }
     },
   });
@@ -37,9 +38,9 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     allowedRoles.includes(user?.role as string) ? (
     <Outlet />
   ) : cookies.logged_in && user ? (
-    <Navigate to='/unauthorized' state={{ from: location }} replace />
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to='/login' state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 
