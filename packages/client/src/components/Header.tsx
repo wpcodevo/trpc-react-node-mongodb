@@ -1,21 +1,21 @@
-import { useQueryClient } from 'react-query';
-import { Link } from 'react-router-dom';
-import useStore from '../store';
-import { trpc } from '../trpc';
+import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import useStore from "../store";
+import { trpc } from "../trpc";
 
 const Header = () => {
   const store = useStore();
   const user = store.authUser;
 
   const queryClient = useQueryClient();
-  const { mutate: logoutUser } = trpc.useMutation(['auth.logout'], {
+  const { mutate: logoutUser } = trpc.logoutUser.useMutation({
     onSuccess(data) {
       queryClient.clear();
-      document.location.href = '/login';
+      document.location.href = "/login";
     },
     onError(error) {
       queryClient.clear();
-      document.location.href = '/login';
+      document.location.href = "/login";
     },
   });
 
@@ -24,28 +24,28 @@ const Header = () => {
   };
 
   return (
-    <header className='bg-white h-20'>
-      <nav className='h-full flex justify-between container items-center'>
+    <header className="bg-white h-20">
+      <nav className="h-full flex justify-between container items-center">
         <div>
-          <Link to='/' className='text-ct-dark-600 text-2xl font-semibold'>
+          <Link to="/" className="text-ct-dark-600 text-2xl font-semibold">
             CodevoWeb
           </Link>
         </div>
-        <ul className='flex items-center gap-4'>
+        <ul className="flex items-center gap-4">
           <li>
-            <Link to='/' className='text-ct-dark-600'>
+            <Link to="/" className="text-ct-dark-600">
               Home
             </Link>
           </li>
           {!user && (
             <>
               <li>
-                <Link to='/register' className='text-ct-dark-600'>
+                <Link to="/register" className="text-ct-dark-600">
                   SignUp
                 </Link>
               </li>
               <li>
-                <Link to='/login' className='text-ct-dark-600'>
+                <Link to="/login" className="text-ct-dark-600">
                   Login
                 </Link>
               </li>
@@ -54,12 +54,12 @@ const Header = () => {
           {user && (
             <>
               <li>
-                <Link to='/profile' className='text-ct-dark-600'>
+                <Link to="/profile" className="text-ct-dark-600">
                   Profile
                 </Link>
               </li>
-              <li className='cursor-pointer'>Create Post</li>
-              <li className='cursor-pointer' onClick={handleLogout}>
+              <li className="cursor-pointer">Create Post</li>
+              <li className="cursor-pointer" onClick={handleLogout}>
                 Logout
               </li>
             </>
