@@ -7,7 +7,7 @@
     "start": "ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "dependencies": {
-    "@trpc/server": "^9.25.3",
+    "@trpc/server": "^10.0.0-proxy-beta.26",
     "@typegoose/typegoose": "^9.9.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",

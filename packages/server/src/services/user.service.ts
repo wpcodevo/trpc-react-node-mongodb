@@ -1,13 +1,13 @@
-import { omit } from 'lodash';
-import { FilterQuery, QueryOptions } from 'mongoose';
-import userModel, { User } from '../models/user.model';
-import { signJwt } from '../utils/jwt';
-import redisClient from '../utils/connectRedis';
-import { DocumentType } from '@typegoose/typegoose';
-import customConfig from '../config/default';
+import { omit } from "lodash";
+import { FilterQuery, QueryOptions } from "mongoose";
+import userModel, { User } from "../models/user.model";
+import { signJwt } from "../utils/jwt";
+import redisClient from "../utils/connectRedis";
+import { DocumentType } from "@typegoose/typegoose";
+import customConfig from "../config/default";
 
 // Exclude this fields from the response
-export const excludedFields = ['password'];
+export const excludedFields = ["password"];
 
 // CreateUser service
 export const createUser = async (input: Partial<User>) => {
@@ -17,8 +17,7 @@ export const createUser = async (input: Partial<User>) => {
 
 // Find User by Id
 export const findUserById = async (id: string) => {
-  const user = await userModel.findById(id).lean();
-  return omit(user, excludedFields);
+  return await userModel.findById(id).lean();
 };
 
 // Find All users
@@ -31,19 +30,19 @@ export const findUser = async (
   query: FilterQuery<User>,
   options: QueryOptions = {}
 ) => {
-  return await userModel.findOne(query, {}, options).select('+password');
+  return await userModel.findOne(query, {}, options).select("+password");
 };
 
 // Sign Token
 export const signToken = async (user: DocumentType<User>) => {
   const userId = user._id.toString();
   // Sign the access token
-  const access_token = signJwt({ sub: userId }, 'accessTokenPrivateKey', {
+  const access_token = signJwt({ sub: userId }, "accessTokenPrivateKey", {
     expiresIn: `${customConfig.accessTokenExpiresIn}m`,
   });
 
   // Sign the refresh token
-  const refresh_token = signJwt({ sub: userId }, 'refreshTokenPrivateKey', {
+  const refresh_token = signJwt({ sub: userId }, "refreshTokenPrivateKey", {
     expiresIn: `${customConfig.refreshTokenExpiresIn}m`,
   });
 
