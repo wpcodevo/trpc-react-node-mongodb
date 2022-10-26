@@ -1,5 +1,5 @@
-import create from 'zustand';
-import { IUser } from '../lib/types';
+import create from "zustand";
+import { IUser } from "../libs/types";
 
 type Store = {
   authUser: IUser | null;
@@ -14,7 +14,6 @@ const useStore = create<Store>((set) => ({
   authUser: null,
   uploadingImage: false,
   pageLoading: false,
-  openModal: false,
   setAuthUser: (user) => set((state) => ({ ...state, authUser: user })),
   setUploadingImage: (isUploading) =>
     set((state) => ({ ...state, uploadingImage: isUploading })),

@@ -1,21 +1,21 @@
-import { FC, useEffect } from 'react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { twMerge } from 'tailwind-merge';
-import { object, string, TypeOf } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import FileUpLoader from '../FileUpload';
-import { LoadingButton } from '../LoadingButton';
-import TextInput from '../TextInput';
-import { toast } from 'react-toastify';
-import useStore from '../../store';
-import { trpc } from '../../trpc';
-import { useQueryClient } from 'react-query';
+import { FC, useEffect } from "react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { twMerge } from "tailwind-merge";
+import { object, string, TypeOf } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FileUpLoader from "../FileUpload";
+import { LoadingButton } from "../LoadingButton";
+import TextInput from "../TextInput";
+import { toast } from "react-toastify";
+import useStore from "../../store";
+import { trpc } from "../../trpc";
+import { useQueryClient } from "@tanstack/react-query";
 
 const createPostSchema = object({
-  title: string().min(1, 'Title is required'),
-  category: string().min(1, 'Category is required'),
-  content: string().min(1, 'Content is required'),
-  image: string().min(1, 'Image is required'),
+  title: string().min(1, "Title is required"),
+  category: string().min(1, "Category is required"),
+  content: string().min(1, "Content is required"),
+  image: string().min(1, "Image is required"),
 });
 
 type CreatePostInput = TypeOf<typeof createPostSchema>;
@@ -27,14 +27,14 @@ type ICreatePostProp = {
 const CreatePost: FC<ICreatePostProp> = ({ setOpenPostModal }) => {
   const store = useStore();
   const queryClient = useQueryClient();
-  const { isLoading, mutate: createPost } = trpc.useMutation(['posts.create'], {
+  const { isLoading, mutate: createPost } = trpc.createPost.useMutation({
     onSuccess(data) {
       store.setPageLoading(false);
       setOpenPostModal(false);
-      queryClient.refetchQueries('posts.getPosts');
-      toast('Post created successfully', {
-        type: 'success',
-        position: 'top-right',
+      queryClient.refetchQueries([["getPosts"]]);
+      toast("Post created successfully", {
+        type: "success",
+        position: "top-right",
       });
     },
     onError(error: any) {
@@ -42,8 +42,8 @@ const CreatePost: FC<ICreatePostProp> = ({ setOpenPostModal }) => {
       setOpenPostModal(false);
       error.response.errors.forEach((err: any) => {
         toast(err.message, {
-          type: 'error',
-          position: 'top-right',
+          type: "error",
+          position: "top-right",
         });
       });
     },
@@ -70,35 +70,35 @@ const CreatePost: FC<ICreatePostProp> = ({ setOpenPostModal }) => {
   };
   return (
     <section>
-      <h2 className='text-2xl font-semibold mb-4'>Create Post</h2>
+      <h2 className="text-2xl font-semibold mb-4">Create Post</h2>
 
       <FormProvider {...methods}>
-        <form className='w-full' onSubmit={handleSubmit(onSubmitHandler)}>
-          <TextInput name='title' label='Title' />
-          <TextInput name='category' label='Category' />
-          <div className='mb-2'>
-            <label className='block text-gray-700 text-lg mb-2' htmlFor='title'>
+        <form className="w-full" onSubmit={handleSubmit(onSubmitHandler)}>
+          <TextInput name="title" label="Title" />
+          <TextInput name="category" label="Category" />
+          <div className="mb-2">
+            <label className="block text-gray-700 text-lg mb-2" htmlFor="title">
               Content
             </label>
             <textarea
               className={twMerge(
                 `appearance-none border border-ct-dark-200 rounded w-full py-3 px-3 text-gray-700 mb-2 leading-tight focus:outline-none`,
-                `${errors.content && 'border-red-500'}`
+                `${errors.content && "border-red-500"}`
               )}
               rows={4}
-              {...register('content')}
+              {...register("content")}
             />
             <p
               className={twMerge(
                 `text-red-500 text-xs italic mb-2 invisible`,
-                `${errors.content && 'visible'}`
+                `${errors.content && "visible"}`
               )}
             >
-              {errors.content ? errors.content.message : ''}
+              {errors.content ? errors.content.message : ""}
             </p>
           </div>
-          <FileUpLoader name='image' />
-          <LoadingButton loading={isLoading} textColor='text-ct-blue-600'>
+          <FileUpLoader name="image" />
+          <LoadingButton loading={isLoading} textColor="text-ct-blue-600">
             Create Post
           </LoadingButton>
         </form>

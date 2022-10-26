@@ -1,24 +1,24 @@
-import { TRPCError } from '@trpc/server';
-import { CookieOptions } from 'express';
-import { serialize } from 'cookie';
-import { Context } from '../app';
-import customConfig from '../config/default';
-import { CreateUserInput, LoginUserInput } from '../schema/user.schema';
+import { TRPCError } from "@trpc/server";
+import { CookieOptions } from "express";
+import { Context } from "../app";
+import customConfig from "../config/default";
+import { CreateUserInput, LoginUserInput } from "../schema/user.schema";
 import {
   createUser,
   findUser,
   findUserById,
   signToken,
-} from '../services/user.service';
-import redisClient from '../utils/connectRedis';
-import { signJwt, verifyJwt } from '../utils/jwt';
+} from "../services/user.service";
+import redisClient from "../utils/connectRedis";
+import { signJwt, verifyJwt } from "../utils/jwt";
 
-// Cookie options
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
 };
+
+// Cookie options
 const accessTokenCookieOptions: CookieOptions = {
   ...cookieOptions,
   expires: new Date(Date.now() + customConfig.accessTokenExpiresIn * 60 * 1000),
@@ -30,6 +30,10 @@ const refreshTokenCookieOptions: CookieOptions = {
     Date.now() + customConfig.refreshTokenExpiresIn * 60 * 1000
   ),
 };
+
+// Only set secure to true in production
+if (process.env.NODE_ENV === "production")
+  accessTokenCookieOptions.secure = true;
 
 export const registerHandler = async ({
   input,
@@ -45,7 +49,7 @@ export const registerHandler = async ({
     });
 
     return {
-      status: 'success',
+      status: "success",
       data: {
         user,
       },
@@ -53,8 +57,8 @@ export const registerHandler = async ({
   } catch (err: any) {
     if (err.code === 11000) {
       throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'Email already exists',
+        code: "CONFLICT",
+        message: "Email already exists",
       });
     }
     throw err;
@@ -78,8 +82,8 @@ export const loginHandler = async ({
       !(await user.comparePasswords(user.password, input.password))
     ) {
       throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Invalid email or password',
+        code: "BAD_REQUEST",
+        message: "Invalid email or password",
       });
     }
 
@@ -87,16 +91,16 @@ export const loginHandler = async ({
     const { access_token, refresh_token } = await signToken(user);
 
     // Send Access Token in Cookie
-    ctx.res.cookie('access_token', access_token, accessTokenCookieOptions);
-    ctx.res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
-    ctx.res.cookie('logged_in', true, {
+    ctx.res.cookie("access_token", access_token, accessTokenCookieOptions);
+    ctx.res.cookie("refresh_token", refresh_token, refreshTokenCookieOptions);
+    ctx.res.cookie("logged_in", true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
     // Send Access Token
     return {
-      status: 'success',
+      status: "success",
       access_token,
     };
   } catch (err: any) {
@@ -106,9 +110,9 @@ export const loginHandler = async ({
 
 // Refresh tokens
 const logout = ({ ctx }: { ctx: Context }) => {
-  ctx.res.cookie('access_token', '', { maxAge: -1 });
-  ctx.res.cookie('refresh_token', '', { maxAge: -1 });
-  ctx.res.cookie('logged_in', '', {
+  ctx.res.cookie("access_token", "", { maxAge: -1 });
+  ctx.res.cookie("refresh_token", "", { maxAge: -1 });
+  ctx.res.cookie("logged_in", "", {
     maxAge: -1,
   });
 };
@@ -118,49 +122,49 @@ export const refreshAccessTokenHandler = async ({ ctx }: { ctx: Context }) => {
     // Get the refresh token from cookie
     const refresh_token = ctx.req.cookies.refresh_token as string;
 
-    const message = 'Could not refresh access token';
+    const message = "Could not refresh access token";
     if (!refresh_token) {
-      throw new TRPCError({ code: 'FORBIDDEN', message });
+      throw new TRPCError({ code: "FORBIDDEN", message });
     }
 
     // Validate the Refresh token
     const decoded = verifyJwt<{ sub: string }>(
       refresh_token,
-      'refreshTokenPublicKey'
+      "refreshTokenPublicKey"
     );
 
     if (!decoded) {
-      throw new TRPCError({ code: 'FORBIDDEN', message });
+      throw new TRPCError({ code: "FORBIDDEN", message });
     }
 
     // Check if the user has a valid session
     const session = await redisClient.get(decoded.sub);
     if (!session) {
-      throw new TRPCError({ code: 'FORBIDDEN', message });
+      throw new TRPCError({ code: "FORBIDDEN", message });
     }
 
     // Check if the user exist
     const user = await findUserById(JSON.parse(session)._id);
 
     if (!user) {
-      throw new TRPCError({ code: 'FORBIDDEN', message });
+      throw new TRPCError({ code: "FORBIDDEN", message });
     }
 
     // Sign new access token
-    const access_token = signJwt({ sub: user._id }, 'accessTokenPrivateKey', {
+    const access_token = signJwt({ sub: user._id }, "accessTokenPrivateKey", {
       expiresIn: `${customConfig.accessTokenExpiresIn}m`,
     });
 
     // Send the access token as cookie
-    ctx.res.cookie('access_token', access_token, accessTokenCookieOptions);
-    ctx.res.cookie('logged_in', true, {
+    ctx.res.cookie("access_token", access_token, accessTokenCookieOptions);
+    ctx.res.cookie("logged_in", true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
     // Send response
     return {
-      status: 'success',
+      status: "success",
       access_token,
     };
   } catch (err: any) {
@@ -173,7 +177,7 @@ export const logoutHandler = async ({ ctx }: { ctx: Context }) => {
     const user = ctx.user;
     await redisClient.del(user?._id.toString());
     logout({ ctx });
-    return { status: 'success' };
+    return { status: "success" };
   } catch (err: any) {
     throw err;
   }
