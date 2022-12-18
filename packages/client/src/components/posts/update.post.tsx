@@ -42,11 +42,9 @@ const UpdatePost: FC<IUpdatePostProps> = ({ post, setOpenPostModal }) => {
     onError(error: any) {
       store.setPageLoading(false);
       setOpenPostModal(false);
-      error.response.errors.forEach((err: any) => {
-        toast(err.message, {
-          type: "error",
-          position: "top-right",
-        });
+      toast(error.message, {
+        type: "error",
+        position: "top-right",
       });
     },
   });
