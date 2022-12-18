@@ -19,7 +19,7 @@ const HomePage = () => {
       onSuccess: (data) => {
         store.setPageLoading(false);
       },
-      onError(error: any) {
+      onError(error) {
         store.setPageLoading(false);
         toast(error.message, {
           type: "error",
